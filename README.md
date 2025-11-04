@@ -68,6 +68,16 @@ cd <seu-repo>
 - Importar em IDE (opcional):
   - Importe como projeto Gradle e execute a tarefa `lwjgl3:run`.
 
+### Assets
+
+- As imagens ficam em `lwjgl3/assets/sprites/`.
+- Não usamos mais TextureAtlas. As texturas são carregadas como arquivos soltos pelo `SpriteManager` via `sprites.get(key)`.
+- Sprites usados atualmente:
+  - Fundo: `Street`, `Street1`
+  - Jogador: `front_view_character`, `back_view_character`, `side_view_character_Final`
+  - Caminhão: `Art Garbage Truck_Right`
+  - Lixos: `Trash_Pixel1` … `Trash_Pixel6`
+
 ## Controles
 
 - Movimento: Setas ou WASD
@@ -123,10 +133,30 @@ levels.add(new Level(40f, 22, 18f, 270f, 64f, 32f));
 
 Observação: com LWJGL (nativos), `distZip`/`installDist` é mais confiável do que tentar um “fat jar”.
 
-## Estrutura Geral (Gradle multi-módulo)
+## Estrutura do projeto
 
-- `core/`: código do jogo (modelos, controladores, renderização básica)
-- `lwjgl3/`: launcher desktop e tarefas de execução/empacotamento
+- `core/`: código do jogo (modelos, controladores, renderização)
+  - `br/cleancity/model/`
+    - `GameWorld`, `Player`, `Trash`, `Truck`, `Score`, `Level`
+  - `br/cleancity/controller/`
+    - `InputController`, `GameController`, `CollisionHandler`
+  - `br/cleancity/view/`
+    - `SpriteManager` (carrega texturas soltas e mantém um pixel branco 1x1 e fonte padrão)
+    - `GameRenderer` (mundo) e `HUDRenderer` (interface)
+  - `br/cleancity/CleanCityGame` (ciclo de vida LibGDX e níveis)
+
+## Conceitos-chave (LibGDX)
+
+- **OrthographicCamera**: define um “mundo” 2D com dimensões lógicas; aplicamos `camera.combined` no `SpriteBatch` antes de desenhar.
+- **SpriteBatch**: desenho eficiente de sprites; iniciado/encerrado em `CleanCityGame.render()`.
+- **Texturas sem atlas**: `SpriteManager.get(key)` carrega `Texture` diretamente.
+- **HUD com câmera própria**: o HUD troca a projeção do `SpriteBatch` para coordenadas de tela.
+
+## Escalas, sprites e colisões
+
+- Tamanhos de render são percentuais da altura do viewport, preservando o aspecto do sprite em `GameRenderer`.
+- `syncHitboxesToSpriteSizes()` mantém as hitboxes consistentes com o que é desenhado.
+- Cada `Trash` possui `spriteKey` estável, evitando que os sprites remanescentes mudem após coletas.
 
 ## CI (Opcional — GitHub Actions)
 
@@ -162,6 +192,3 @@ jobs:
 - Se falhar por versão do Java, garanta que está usando 17+.
 - Performance baixa: reduza a quantidade de lixo nas fases.
 
-## Licença
-
-Defina a licença desejada (ex.: MIT) adicionando um arquivo `LICENSE` na raiz do repositório.

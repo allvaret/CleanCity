@@ -12,6 +12,8 @@ public class Trash {
     public float width;
     /** Altura do item de lixo. */
     public float height;
+    /** Chave do sprite associada a este lixo (estável durante a vida do objeto). */
+    public String spriteKey;
 
     /**
      * Cria um item de lixo com posição e tamanho informados.

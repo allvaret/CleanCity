@@ -16,6 +16,25 @@ import java.util.ArrayList;
 import java.util.List;
 import br.cleancity.model.Level;
 
+/**
+ * Ponto de entrada do jogo no LibGDX.
+ * 
+ * Esta classe organiza os principais componentes seguindo uma separação de responsabilidades
+ * semelhante a MVC:
+ * - Modelo (`br.cleancity.model.*`): estado do jogo, entidades e regras básicas
+ * - Controle (`br.cleancity.controller.*`): atualiza o estado a cada frame com base em entrada e regras
+ * - Visão (`br.cleancity.view.*`): desenha o mundo e o HUD usando os recursos gráficos
+ * 
+ * Ciclo de vida do LibGDX:
+ * - `create()`: inicializa recursos (texturas, fontes, câmeras) e constrói os níveis
+ * - `render()`: é chamado a cada frame; atualiza lógica (controle/colisões) e desenha (mundo/HUD)
+ * - `dispose()`: libera os recursos alocados na GPU/CPU
+ * 
+ * Controles:
+ * - Setas ou WASD: mover jogador
+ * - R: reiniciar o nível atual
+ * - N: ir para o próximo nível
+ */
 public class CleanCityGame extends ApplicationAdapter {
     private SpriteBatch batch;
     private SpriteManager sprites;
@@ -79,6 +98,11 @@ public class CleanCityGame extends ApplicationAdapter {
         loadLevel(next);
     }
 
+    /**
+     * Loop principal por frame: processa entrada, atualiza lógica e renderiza.
+     * Usa `Gdx.graphics.getDeltaTime()` para obter o tempo entre frames (delta),
+     * garantindo movimento e temporização independentes do FPS.
+     */
     @Override
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
@@ -94,6 +118,10 @@ public class CleanCityGame extends ApplicationAdapter {
         batch.end();
     }
 
+    /**
+     * Libera recursos gráficos alocados. Importante para evitar vazamentos
+     * (texturas e fontes residem em memória de GPU/CPU no LibGDX).
+     */
     @Override
     public void dispose() {
         batch.dispose();

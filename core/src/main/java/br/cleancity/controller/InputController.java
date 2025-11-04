@@ -6,6 +6,13 @@ import com.badlogic.gdx.math.Vector2;
 
 /**
  * Lê o teclado e converte em uma direção normalizada para movimentação do jogador.
+ *
+ * Mapeamento:
+ * - Setas ou WASD em X/Y (LEFT/RIGHT, A/D, DOWN/UP, S/W).
+ * - Quando ambas as direções são pressionadas (diagonal), normaliza com `Vector2.nor()`
+ *   para manter a mesma velocidade efetiva em qualquer direção.
+ *
+ * Implementação via polling de `Gdx.input`(fica checando constantemente o input).
  */
 public class InputController {
     private final Vector2 dir = new Vector2();

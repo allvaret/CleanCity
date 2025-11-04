@@ -7,6 +7,14 @@ import br.cleancity.model.Trash;
 /**
  * Responsável por detectar colisões e aplicar as regras de coleta/entrega de lixo.
  */
+/**
+ * Detecta colisões por sobreposição retangular (AABB) e aplica regras de coleta e entrega:
+ * - Coleta: quando jogador encosta em um lixo, remove-o da lista e incrementa `carriedTrash`.
+ * - Entrega: quando jogador encosta no caminhão, converte `carriedTrash` em pontos.
+ *
+ * Detalhe importante: ao remover itens da lista enquanto itera, percorremos de trás para frente
+ * para evitar pular elementos (padrão seguro em listas indexadas).
+ */
 public class CollisionHandler {
     private final GameWorld world;
 

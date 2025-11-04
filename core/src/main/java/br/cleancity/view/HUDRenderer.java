@@ -8,6 +8,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 /**
  * Responsável por desenhar informações de interface (HUD): pontuação, lixo carregado,
  * tempo restante e mensagens de estado.
+ *
+ * Conceitos:
+ * - Câmera do HUD: `OrthographicCamera` configurada no espaço de tela (pixels). Antes de desenhar o HUD,
+ *   trocamos a matriz de projeção do `SpriteBatch` para `hudCamera.combined`.
+ * - Fonte: `BitmapFont` padrão do LibGDX. Não possui métricas avançadas; usamos aproximações simples para centralizar.
+ * - Coordenadas: desenhamos a partir da margem superior esquerda com offsets fixos para simplicidade.
  */
 public class HUDRenderer {
     private final BitmapFont font;
@@ -23,7 +29,8 @@ public class HUDRenderer {
     }
 
     /**
-     * Desenha os elementos do HUD.
+     * Desenha os elementos do HUD, alternando a projeção do batch para a câmera do HUD.
+     * Mostra valores numéricos simples e mensagens de fim de jogo.
      * @param batch SpriteBatch já iniciado
      * @param score pontuação atual
      * @param carried quantidade de lixo carregado pelo jogador
@@ -43,11 +50,11 @@ public class HUDRenderer {
                 String msg = "Você venceu!";
                 float width = font.getRegion().getRegionWidth(); // aproximação; fonte padrão não possui métricas completas
                 float x = hudCamera.viewportWidth * 0.5f - width * 0.5f;
-                float y = hudCamera.viewportHeight * 0.5f;
+                float y = hudCamera.viewportHeight * 0.9f;
                 font.draw(batch, msg, x, y);
 
-                String hint = "Pressione R para jogar novamente";
-                font.draw(batch, hint, x, y - 20);
+                String hint = "Pressione R para jogar novamente \nPressione N para avançar para o próximo level";
+                font.draw(batch, hint, x, y - 20 );
             } else {
                 String msg = "Game Over";
                 float width = font.getRegion().getRegionWidth(); // aproximação; fonte padrão não possui métricas completas

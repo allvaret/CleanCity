@@ -8,6 +8,12 @@ import com.badlogic.gdx.math.Vector2;
 /**
  * Controla a lógica do jogo: aplica entrada no jogador, atualiza o relógio e move o caminhão.
  */
+/**
+ * Atualiza a lógica do jogo a cada frame:
+ * - Decrementa o tempo restante usando delta time (independente de FPS).
+ * - Move o caminhão para a direita; quando sai da tela, encerra o jogo.
+ * - Aplica entrada ao jogador e restringe movimento aos limites do mundo (clamping).
+ */
 public class GameController {
     private final GameWorld world;
     private final InputController input;
@@ -49,6 +55,11 @@ public class GameController {
         move.set(dir).scl(p.speed * delta);
         p.x += move.x;
         p.y += move.y;
+        // Guarda a última direção não-nula para renderização direcional
+        if (dir.len2() > 0f) {
+            p.faceX = dir.x;
+            p.faceY = dir.y;
+        }
         // Restringe o jogador aos limites do mundo
         if (p.x < 0) p.x = 0;
         if (p.y < 0) p.y = 0;

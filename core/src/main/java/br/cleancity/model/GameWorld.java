@@ -8,7 +8,15 @@ import br.cleancity.model.Level;
 /**
  * Representa o estado do jogo (Modelo) contendo o mundo, entidades e regras básicas.
  * Mantém jogador, caminhão, lixo, pontuação e controle de tempo/estado de game over.
+ *
+ * Parâmetros de fase (ver `Level`): tempo total, quantidade/tamanho do lixo, velocidade do jogador,
+ * largura/altura do caminhão. A velocidade do caminhão é calculada para que ele atravesse a tela
+ * ao final do tempo total (incluindo a própria largura), o que define uma condição natural de fim.
+ *
+ * Geração de lixo (`spawnTrash`): posiciona itens aleatoriamente evitando a área inicial do jogador
+ * (um retângulo em torno do spawn) para não gerar coleta imediata.
  */
+@SuppressWarnings("unused")
 public class GameWorld {
     /** Largura lógica do mundo (em unidades de mundo). */
     public final float worldWidth;
@@ -84,7 +92,11 @@ public class GameWorld {
                 guard++;
                 if (guard > 1000) break; // segurança para evitar loop infinito
             } while (overlaps(x, y, size, size, player.x, player.y, player.width * 3f, player.height * 3f));
-            trashList.add(new Trash(x, y, size, size));
+            Trash trash = new Trash(x, y, size, size);
+            // Atribui uma chave de sprite estável para não mudar após remoções na lista
+            String[] keys = new String[] {"Trash_Pixel1","Trash_Pixel2","Trash_Pixel3","Trash_Pixel4","Trash_Pixel5","Trash_Pixel6"};
+            if (trash.spriteKey == null && keys.length > 0) trash.spriteKey = keys[i % keys.length];
+            trashList.add(trash);
         }
     }
 

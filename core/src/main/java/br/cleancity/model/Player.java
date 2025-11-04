@@ -14,6 +14,9 @@ public class Player {
     public float height;
     /** Velocidade em unidades por segundo. */
     public float speed;
+    /** Última direção de movimento usada para render (unitária, ou 0 se parado). */
+    public float faceX = 0f;
+    public float faceY = -1f; // por padrão olhando para frente
 
     /**
      * Cria um jogador com posição, tamanho e velocidade informados.
