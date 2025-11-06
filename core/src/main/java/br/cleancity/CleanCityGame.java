@@ -7,6 +7,7 @@ import br.cleancity.model.GameWorld;
 import br.cleancity.view.GameRenderer;
 import br.cleancity.view.HUDRenderer;
 import br.cleancity.view.SpriteManager;
+import br.cleancity.view.IntroRenderer;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -44,6 +45,7 @@ public class CleanCityGame extends ApplicationAdapter {
     private CollisionHandler collisionHandler;
     private GameRenderer gameRenderer;
     private HUDRenderer hudRenderer;
+    private IntroRenderer intro;
 
     // Níveis
     private final List<Level> levels = new ArrayList<>();
@@ -56,6 +58,7 @@ public class CleanCityGame extends ApplicationAdapter {
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
         input = new InputController();
+        intro = new br.cleancity.view.IntroRenderer(sprites);
         gameRenderer = new GameRenderer(sprites, w, h);
         hudRenderer = new HUDRenderer(sprites, w, h);
         buildLevels();
@@ -106,6 +109,20 @@ public class CleanCityGame extends ApplicationAdapter {
     @Override
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
+
+        // Intro antes do jogo (delegado para IntroRenderer)
+        if (intro != null && !intro.isDone()) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                intro.skip();
+            }
+            intro.update(delta);
+            ScreenUtils.clear(0.05f, 0.05f, 0.08f, 1f);
+            batch.begin();
+            intro.render(batch);
+            batch.end();
+            return;
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) restart();
         if (Gdx.input.isKeyJustPressed(Input.Keys.N)) nextLevel();
         controller.update(delta);
