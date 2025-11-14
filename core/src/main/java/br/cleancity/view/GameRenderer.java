@@ -11,16 +11,18 @@ import com.badlogic.gdx.graphics.Texture;
 /**
  * Responsável por desenhar os elementos do mundo (lixo, caminhão e jogador) usando uma câmera ortográfica.
  *
- * Conceitos principais do LibGDX usados aqui:
- * - {@link OrthographicCamera}: define um "mundo" 2D com largura/altura lógicas e gera a matriz de projeção.
- * - {@link SpriteBatch}: lote de desenho rápido para sprites 2D; é necessário chamar `begin()`/`end()` fora desta classe.
- * - {@link Texture}: sprites carregados diretamente pelo `SpriteManager` a partir de `assets/sprites/`.
+ * Conceitos principais do LibGDX:
+ * - {@link OrthographicCamera}: define o espaço lógico 2D (viewport) e sua projeção.
+ * - {@link SpriteBatch}: batch de desenho para sprites 2D; `begin()`/`end()` acontecem fora desta classe.
+ * - {@link Texture}: sprites carregados pelo `SpriteManager` a partir de `assets/sprites/`.
  *
- * Técnicas de renderização:
- * - Sincronização de hitboxes: `syncHitboxesToSpriteSizes()` calcula largura/altura de cada entidade como porcentagem da
- *   altura do viewport da câmera, preservando o aspecto do sprite (width = height * (tw/th)). Isso mantém colisões e
- *   desenho consistentes.
- * - Espelhamento horizontal: desenhar com largura negativa (`batch.draw(..., -width, height)`) reflete o sprite no eixo X.
+ * Detalhes importantes:
+ * - Sincronização de hitboxes: `syncHitboxesToSpriteSizes()` deixa `width/height` das entidades proporcional ao sprite,
+ *   em função de uma fração da altura do viewport, preservando o aspecto (width = height * (tw/th)). Assim, colisão e
+ *   render ficam consistentes mesmo mudando resolução.
+ * - Ordem de desenho condicional: quando o jogador está derrotado, desenhamos o jogador primeiro e depois o caminhão,
+ *   para criar a sensação de atropelamento (caminhão por cima). Caso contrário, caminhão abaixo e jogador acima.
+ * - Espelhamento horizontal: largura negativa em `batch.draw` reflete o sprite lateral quando olhando à esquerda.
  */
 public class GameRenderer {
     private final OrthographicCamera worldCamera;
@@ -35,11 +37,10 @@ public class GameRenderer {
     }
 
     private static final float TRASH_HEIGHT_PCT = 0.06f;
-    private static final float TRUCK_HEIGHT_PCT = 0.15f;
+    private static final float TRUCK_HEIGHT_PCT = 0.14f;
     private static final float PLAYER_HEIGHT_PCT = 0.10f;
 
-    // Mantém as hitboxes com os mesmos tamanhos usados na renderização (percentual do viewport, preservando aspecto).
-    // Calcula width/height-alvo a partir do aspecto do sprite e de uma fração da altura do viewport.
+    // Mantém hitboxes proporcionais ao sprite e ao viewport, garantindo que colisão e desenho "batam" visualmente.
     private void syncHitboxesToSpriteSizes(GameWorld world) {
         float vh = worldCamera.viewportHeight;
 
@@ -113,26 +114,51 @@ public class GameRenderer {
             }
         }
 
-        // Caminhão
-        Texture truckTex = sprites.get("Art Garbage Truck_Right");
-        batch.draw(truckTex, world.truck.x, world.truck.y, world.truck.width, world.truck.height);
-
-        // Jogador direcional: usa frente, costas ou lado; reflete lado para a esquerda
+        // Renderização do jogador e caminhão
+        // Observação: quando p.isDefeated == true, desenhamos o jogador antes e o caminhão depois (por cima)
+        // para reforçar o efeito visual de atropelamento.
         Player p = world.player;
-        Texture texFront = sprites.get("front_view_character");
-        Texture texBack  = sprites.get("back_view_character");
-        Texture texSide  = sprites.get("side_view_character_Final");
+        Texture truckTex = sprites.get("Art Garbage Truck_Right");
 
-        float ax = Math.abs(p.faceX);
-        float ay = Math.abs(p.faceY);
-        if (ax >= ay && ax > 0f) {
-            boolean left = p.faceX < 0f;
-            float drawX = left ? p.x + p.width : p.x;
-            batch.draw(texSide, drawX, p.y, left ? -p.width : p.width, p.height);
-        } else if (p.faceY > 0f) {
-            batch.draw(texBack, p.x, p.y, p.width, p.height);
+        if (p.isDefeated) {
+            // Desenha o jogador derrotado primeiro (embaixo)
+            Texture texDefeated = sprites.get("DefeatedCharacter");
+            if (texDefeated == null) texDefeated = sprites.white();
+
+            float scale = 1f;
+            batch.draw(texDefeated,
+                      p.x - (p.width * (scale - 1)) / 2,
+                      p.y - (p.height * (scale - 1)) / 2,
+                      p.width/2, p.height/2,
+                      p.width * scale, p.height * scale,
+                      1f, 1f,
+                      180f,
+                      0, 0,
+                      texDefeated.getWidth(), texDefeated.getHeight(),
+                      false, false);
+
+            // ...e depois o caminhão por cima
+            batch.draw(truckTex, world.truck.x, world.truck.y, world.truck.width, world.truck.height);
         } else {
-            batch.draw(texFront, p.x, p.y, p.width, p.height);
+            // Jogador vivo: mantém ordem atual (caminhão abaixo, jogador acima)
+            batch.draw(truckTex, world.truck.x, world.truck.y, world.truck.width, world.truck.height);
+
+            // Jogador normal: usa frente, costas ou lado; reflete lado para a esquerda
+            Texture texFront = sprites.get("front_view_character");
+            Texture texBack  = sprites.get("back_view_character");
+            Texture texSide  = sprites.get("side_view_character_Final");
+
+            float ax = Math.abs(p.faceX);
+            float ay = Math.abs(p.faceY);
+            if (ax >= ay && ax > 0f) {
+                boolean left = p.faceX < 0f;
+                float drawX = left ? p.x + p.width : p.x;
+                batch.draw(texSide, drawX, p.y, left ? -p.width : p.width, p.height);
+            } else if (p.faceY > 0f) {
+                batch.draw(texBack, p.x, p.y, p.width, p.height);
+            } else {
+                batch.draw(texFront, p.x, p.y, p.width, p.height);
+            }
         }
 
         batch.setColor(Color.WHITE);

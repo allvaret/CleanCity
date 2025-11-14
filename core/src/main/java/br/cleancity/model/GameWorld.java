@@ -56,7 +56,7 @@ public class GameWorld {
      * Velocidade do caminhão é definida para alcançar a borda direita quando o tempo zerar.
      */
     public GameWorld(float worldWidth, float worldHeight, float totalTime) {
-        this(worldWidth, worldHeight, new Level(totalTime, 15, 20f, 250f, 64f, 32f));
+        this(worldWidth, worldHeight, new Level(totalTime, 15, 20f, 240f, 32f, 16f));
     }
 
     /**
@@ -69,7 +69,7 @@ public class GameWorld {
         this.totalTime = level.totalTime;
         this.timeLeft = this.totalTime;
 
-        this.player = new Player(worldWidth / 2f - 16f, worldHeight / 2f - 16f, 32f, 32f, level.playerSpeed);
+        this.player = new Player(worldWidth / 2f - 16f, worldHeight / 2f - 16f, 26f, 26f, level.playerSpeed);
         this.score = new Score();
         this.truck = new Truck(0f, worldHeight / 2f, level.truckWidth, level.truckHeight, 0f);
         // Velocidade para o caminhão sair da tela quando o tempo acabar (inclui a largura do próprio caminhão)

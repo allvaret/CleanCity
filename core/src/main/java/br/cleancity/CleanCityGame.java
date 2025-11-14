@@ -46,6 +46,10 @@ public class CleanCityGame extends ApplicationAdapter {
     private GameRenderer gameRenderer;
     private HUDRenderer hudRenderer;
     private IntroRenderer intro;
+    
+    // Timers para mensagens especiais do HUD
+    private float collectAllMsgTimer = 0f;
+    private float allLevelsCompletedMsgTimer = 0f;
 
     // Níveis
     private final List<Level> levels = new ArrayList<>();
@@ -60,7 +64,7 @@ public class CleanCityGame extends ApplicationAdapter {
         input = new InputController();
         intro = new br.cleancity.view.IntroRenderer(sprites);
         gameRenderer = new GameRenderer(sprites, w, h);
-        hudRenderer = new HUDRenderer(sprites, w, h);
+        hudRenderer = new HUDRenderer(sprites);
         buildLevels();
         loadLevel(0);
     }
@@ -94,9 +98,19 @@ public class CleanCityGame extends ApplicationAdapter {
 
     private void nextLevel() {
         if (levels.isEmpty()) return;
+        
+        // Verifica se todo o lixo foi coletado e entregue
+        if (world.trashList.size > 0 || world.carriedTrash > 0) {
+            // Ativa mensagem no HUD por alguns segundos
+            collectAllMsgTimer = 3.0f;
+            return; // Não avança de nível se ainda houver lixo para coletar
+        }
+        
         int next = currentLevelIndex + 1;
         if (next >= levels.size()) {
             next = 0; // volta ao primeiro ao finalizar a lista
+            // Ativa mensagem de conclusão de todos os níveis
+            allLevelsCompletedMsgTimer = 3.0f;
         }
         loadLevel(next);
     }
@@ -109,6 +123,9 @@ public class CleanCityGame extends ApplicationAdapter {
     @Override
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
+        // Atualiza timers de mensagens do HUD
+        if (collectAllMsgTimer > 0f) collectAllMsgTimer = Math.max(0f, collectAllMsgTimer - delta);
+        if (allLevelsCompletedMsgTimer > 0f) allLevelsCompletedMsgTimer = Math.max(0f, allLevelsCompletedMsgTimer - delta);
 
         // Intro antes do jogo (delegado para IntroRenderer)
         if (intro != null && !intro.isDone()) {
@@ -131,7 +148,17 @@ public class CleanCityGame extends ApplicationAdapter {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         batch.begin();
         gameRenderer.render(batch, world);
-        hudRenderer.render(batch, world.score, world.carriedTrash, world.timeLeft, world.gameOver, world.gameWon);
+        hudRenderer.render(
+            batch,
+            world.score,
+            world.carriedTrash,
+            world.timeLeft,
+            world.gameOver,
+            world.gameWon,
+            collectAllMsgTimer > 0f,
+            allLevelsCompletedMsgTimer > 0f,
+            delta
+        );
         batch.end();
     }
 

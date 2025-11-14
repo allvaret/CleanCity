@@ -17,6 +17,9 @@ public class Player {
     /** Última direção de movimento usada para render (unitária, ou 0 se parado). */
     public float faceX = 0f;
     public float faceY = -1f; // por padrão olhando para frente
+    
+    /** Indica se o jogador foi derrotado (atingido pelo caminhão) */
+    public boolean isDefeated = false;
 
     /**
      * Cria um jogador com posição, tamanho e velocidade informados.

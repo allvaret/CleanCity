@@ -6,13 +6,11 @@ import br.cleancity.model.Truck;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- * Controla a lógica do jogo: aplica entrada no jogador, atualiza o relógio e move o caminhão.
- */
-/**
- * Atualiza a lógica do jogo a cada frame:
- * - Decrementa o tempo restante usando delta time (independente de FPS).
- * - Move o caminhão para a direita; quando sai da tela, encerra o jogo.
- * - Aplica entrada ao jogador e restringe movimento aos limites do mundo (clamping).
+ * Controla a lógica do jogo por frame:
+ * - Atualiza o relógio (delta time) enquanto não estiver em game over.
+ * - Move o caminhão sempre para a direita; se sair da tela, ativa game over.
+ * - Não atualiza o jogador quando o jogo acaba.
+ * - Quando ativo, aplica entrada ao jogador, registra a última direção para render e faz clamping aos limites do mundo.
  */
 public class GameController {
     private final GameWorld world;
@@ -26,7 +24,11 @@ public class GameController {
     }
 
     /**
-     * Atualiza o estado do jogo para o frame atual.
+     * Atualiza o estado do jogo para o frame atual, na ordem:
+     * 1) Atualiza timer (se não estiver em game over).
+     * 2) Move o caminhão e checa se saiu da tela (encerra o jogo).
+     * 3) Se o jogo acabou, retorna.
+     * 4) Aplica entrada ao jogador, registra direção e faz clamping aos limites do mundo.
      * @param delta tempo em segundos desde o último frame
      */
     public void update(float delta) {
