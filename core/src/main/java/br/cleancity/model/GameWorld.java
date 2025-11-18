@@ -56,7 +56,7 @@ public class GameWorld {
      * Velocidade do caminhão é definida para alcançar a borda direita quando o tempo zerar.
      */
     public GameWorld(float worldWidth, float worldHeight, float totalTime) {
-        this(worldWidth, worldHeight, new Level(totalTime, 15, 20f, 240f, 32f, 16f));
+        this(worldWidth, worldHeight, new Level(totalTime, 15, 20f, 240f, 64f, 32f, "Street"));
     }
 
     /**

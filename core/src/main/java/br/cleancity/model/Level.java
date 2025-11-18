@@ -16,16 +16,19 @@ public class Level {
     public final float truckWidth;
     /** Altura do caminhão. */
     public final float truckHeight;
+    /** Chave do sprite de fundo para este nível. */
+    public final String backgroundKey;
 
     /**
      * Cria um nível com os parâmetros informados.
      */
-    public Level(float totalTime, int trashCount, float trashSize, float playerSpeed, float truckWidth, float truckHeight) {
+    public Level(float totalTime, int trashCount, float trashSize, float playerSpeed, float truckWidth, float truckHeight, String backgroundKey) {
         this.totalTime = totalTime;
         this.trashCount = trashCount;
         this.trashSize = trashSize;
         this.playerSpeed = playerSpeed;
         this.truckWidth = truckWidth;
         this.truckHeight = truckHeight;
+        this.backgroundKey = backgroundKey;
     }
 }

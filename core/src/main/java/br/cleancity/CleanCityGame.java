@@ -73,10 +73,12 @@ public class CleanCityGame extends ApplicationAdapter {
      * Define a lista de fases (níveis) do jogo.
      */
     private void buildLevels() {
-        // totalTime, trashCount, trashSize, playerSpeed, truckW, truckH
-        levels.add(new Level(60f, 15, 20f, 250f, 64f, 32f));
-        levels.add(new Level(50f, 18, 20f, 260f, 64f, 32f));
-        levels.add(new Level(40f, 22, 18f, 270f, 64f, 32f));
+        // totalTime, trashCount, trashSize, playerSpeed, truckW, truckH, backgroundKey
+        levels.add(new Level(60f, 15, 18f, 250f, 64f, 32f, "Street"));
+        levels.add(new Level(50f, 18, 20f, 260f, 64f, 32f, "StreetLDestN"));
+        levels.add(new Level(40f, 22, 18f, 270f, 64f, 32f, "StreetRedUrban"));
+        levels.add(new Level(35f, 24, 18f, 280f, 64f, 32f, "StreetMedianNight"));
+        levels.add(new Level(27f, 28, 16f, 280f, 64f, 32f, "StreetBiscuit"));
     }
 
     /**

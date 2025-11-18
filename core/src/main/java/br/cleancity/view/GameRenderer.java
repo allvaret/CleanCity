@@ -96,10 +96,11 @@ public class GameRenderer {
         // keep hitboxes equal to render sizes
         syncHitboxesToSpriteSizes(world);
 
-        /// Fundo (se existir). Usa Street (atlas) ou Street1 como fallback; cobre o viewport da câmera do mundo
+        // Fundo por nível: usa a chave definida em world.level.backgroundKey como fallback
         batch.setColor(Color.WHITE);
-        Texture bgTex = sprites.get("Street");
-        if (bgTex == sprites.white()) bgTex = sprites.get("Street1");
+        String bgKey = (world.level != null && world.level.backgroundKey != null) ? world.level.backgroundKey : "Street";
+        Texture bgTex = sprites.get(bgKey);
+        if (bgTex == sprites.white()) bgTex = sprites.get("Street");
         batch.draw(bgTex, 0, 0, worldCamera.viewportWidth, worldCamera.viewportHeight);
 
         // Lixo: usa a chave estável armazenada em cada Trash (spriteKey). Fallback para pixel branco.
