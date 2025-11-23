@@ -50,19 +50,17 @@ public class GameRenderer {
             float tw = t.getWidth();
             float th = t.getHeight();
             float targetH = vh * TRUCK_HEIGHT_PCT;
-            float targetW = targetH * (tw / th);
-            world.truck.width = targetW;
+            world.truck.width = targetH * (tw / th);
             world.truck.height = targetH;
         }
 
         // Player size (usa o sprite lateral para aspecto, via Texture)
         {
-            Texture t = sprites.get("side_view_character_Final");
+            Texture t = sprites.get("side_view_character");
             float tw = t.getWidth();
             float th = t.getHeight();
             float targetH = vh * PLAYER_HEIGHT_PCT;
-            float targetW = targetH * (tw / th);
-            world.player.width = targetW;
+            world.player.width = targetH * (tw / th);
             world.player.height = targetH;
         }
 
@@ -147,7 +145,7 @@ public class GameRenderer {
             // Jogador normal: usa frente, costas ou lado; reflete lado para a esquerda
             Texture texFront = sprites.get("front_view_character");
             Texture texBack  = sprites.get("back_view_character");
-            Texture texSide  = sprites.get("side_view_character_Final");
+            Texture texSide  = sprites.get("side_view_character");
 
             float ax = Math.abs(p.faceX);
             float ay = Math.abs(p.faceY);

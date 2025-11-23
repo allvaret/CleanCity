@@ -19,18 +19,18 @@ import br.cleancity.model.Level;
 
 /**
  * Ponto de entrada do jogo no LibGDX.
- * 
+ *
  * Esta classe organiza os principais componentes seguindo uma separação de responsabilidades
  * semelhante a MVC:
  * - Modelo (`br.cleancity.model.*`): estado do jogo, entidades e regras básicas
  * - Controle (`br.cleancity.controller.*`): atualiza o estado a cada frame com base em entrada e regras
  * - Visão (`br.cleancity.view.*`): desenha o mundo e o HUD usando os recursos gráficos
- * 
+ *
  * Ciclo de vida do LibGDX:
  * - `create()`: inicializa recursos (texturas, fontes, câmeras) e constrói os níveis
  * - `render()`: é chamado a cada frame; atualiza lógica (controle/colisões) e desenha (mundo/HUD)
  * - `dispose()`: libera os recursos alocados na GPU/CPU
- * 
+ *
  * Controles:
  * - Setas ou WASD: mover jogador
  * - R: reiniciar o nível atual
@@ -46,7 +46,7 @@ public class CleanCityGame extends ApplicationAdapter {
     private GameRenderer gameRenderer;
     private HUDRenderer hudRenderer;
     private IntroRenderer intro;
-    
+
     // Timers para mensagens especiais do HUD
     private float collectAllMsgTimer = 0f;
     private float allLevelsCompletedMsgTimer = 0f;
@@ -100,14 +100,14 @@ public class CleanCityGame extends ApplicationAdapter {
 
     private void nextLevel() {
         if (levels.isEmpty()) return;
-        
+
         // Verifica se todo o lixo foi coletado e entregue
         if (world.trashList.size > 0 || world.carriedTrash > 0) {
             // Ativa mensagem no HUD por alguns segundos
             collectAllMsgTimer = 3.0f;
             return; // Não avança de nível se ainda houver lixo para coletar
         }
-        
+
         int next = currentLevelIndex + 1;
         if (next >= levels.size()) {
             next = 0; // volta ao primeiro ao finalizar a lista
@@ -172,5 +172,6 @@ public class CleanCityGame extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         sprites.dispose();
+
     }
 }

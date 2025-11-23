@@ -19,8 +19,8 @@ java -version
 
 - Clonar e entrar no diretório do projeto:
   ```bash
-  git clone https://github.com/<seu-usuario>/<seu-repo>.git
-  cd <seu-repo>
+  git clone https://github.com/allvaret/CleanCity.git
+  cd CleanCity
   ```
 
 - Rodar sem IDE:
@@ -42,7 +42,7 @@ java -version
 - As texturas são carregadas como arquivos soltos pelo `SpriteManager` via `sprites.get(key)`
 - Sprites usados atualmente:
   - Fundo: `Street`, `Street1`
-  - Jogador: `front_view_character`, `back_view_character`, `side_view_character_Final`
+  - Jogador: `front_view_character`, `back_view_character`, `side_view_character`
   - Caminhão: `Art Garbage Truck_Right`
   - Lixos: `Trash_Pixel1` … `Trash_Pixel6`
   - Intro: `intro1` … `intro4`
