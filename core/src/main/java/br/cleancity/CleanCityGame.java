@@ -1,5 +1,7 @@
 package br.cleancity;
 
+import br.cleancity.audio.Mfx;
+import br.cleancity.audio.SoundManager;
 import br.cleancity.controller.GameController;
 import br.cleancity.controller.InputController;
 import br.cleancity.controller.CollisionHandler;
@@ -11,6 +13,7 @@ import br.cleancity.view.IntroRenderer;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import java.util.ArrayList;
@@ -37,15 +40,22 @@ import br.cleancity.model.Level;
  * - N: ir para o próximo nível
  */
 public class CleanCityGame extends ApplicationAdapter {
+    // Sprites
     private SpriteBatch batch;
     private SpriteManager sprites;
+    // Model
     private GameWorld world;
+    // Controllers
     private InputController input;
     private GameController controller;
     private CollisionHandler collisionHandler;
+    // View
     private GameRenderer gameRenderer;
     private HUDRenderer hudRenderer;
     private IntroRenderer intro;
+    // Sounds
+    private SoundManager audio;
+    private AssetManager assets;
 
     // Timers para mensagens especiais do HUD
     private float collectAllMsgTimer = 0f;
@@ -61,10 +71,18 @@ public class CleanCityGame extends ApplicationAdapter {
         sprites = new SpriteManager();
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
+
         input = new InputController();
+
         intro = new br.cleancity.view.IntroRenderer(sprites);
         gameRenderer = new GameRenderer(sprites, w, h);
         hudRenderer = new HUDRenderer(sprites);
+
+        assets = new AssetManager();
+        audio = new SoundManager(assets);
+        audio.loadAll();
+        audio.fadeIn(Mfx.TRACK,2f,1f);
+
         buildLevels();
         loadLevel(0);
     }
@@ -90,7 +108,8 @@ public class CleanCityGame extends ApplicationAdapter {
         float h = Gdx.graphics.getHeight();
         world = new GameWorld(w, h, levels.get(currentLevelIndex));
         controller = new GameController(world, input);
-        collisionHandler = new CollisionHandler(world);
+        collisionHandler = new CollisionHandler(world, audio);
+        audio.fadeIn(Mfx.TRACK,1.5f,1f);
     }
 
     private void restart() {
@@ -125,6 +144,7 @@ public class CleanCityGame extends ApplicationAdapter {
     @Override
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
+        audio.update(delta);
         // Atualiza timers de mensagens do HUD
         if (collectAllMsgTimer > 0f) collectAllMsgTimer = Math.max(0f, collectAllMsgTimer - delta);
         if (allLevelsCompletedMsgTimer > 0f) allLevelsCompletedMsgTimer = Math.max(0f, allLevelsCompletedMsgTimer - delta);
@@ -172,6 +192,7 @@ public class CleanCityGame extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         sprites.dispose();
-
+        audio.disposeSound();
+        assets.dispose();
     }
 }

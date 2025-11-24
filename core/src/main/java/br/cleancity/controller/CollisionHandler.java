@@ -1,5 +1,8 @@
 package br.cleancity.controller;
 
+import br.cleancity.audio.Mfx;
+import br.cleancity.audio.Sfx;
+import br.cleancity.audio.SoundManager;
 import br.cleancity.model.GameWorld;
 import br.cleancity.model.Player;
 import br.cleancity.model.Trash;
@@ -17,9 +20,11 @@ import br.cleancity.model.Truck;
  */
 public class CollisionHandler {
     private final GameWorld world;
+    private final SoundManager audio;
 
-    public CollisionHandler(GameWorld world) {
+    public CollisionHandler(GameWorld world, SoundManager audio) {
         this.world = world;
+        this.audio = audio;
     }
 
     /**
@@ -57,10 +62,15 @@ public class CollisionHandler {
             world.gameOver = true;
             world.gameWon = false;
             p.isDefeated = true;
+            audio.fadeOut(Mfx.TRACK,0.6f);
+            audio.waitAndRun(500, () -> {
+                audio.playS(Sfx.DEATH);
+                audio.playS(Sfx.LOSE);
+            });
             return;
         }
 
-        // Impede atravessar o caminhão pelas laterais ou traseira (resolve interpenetração) 
+        // Impede atravessar o caminhão pelas laterais ou traseira (resolve interpenetração)
         if (overlaps(p.x, p.y, p.width, p.height, CollisionX, CollisionY, sW, sH)) {
             // Se não é a frente, apenas resolve a colisão para fora do caminhão
             if (!isHitByTruckFrontBounds(p, CollisionX, CollisionY, sW, sH)) {
@@ -74,6 +84,7 @@ public class CollisionHandler {
             if (overlaps(p.x, p.y, p.width, p.height, trash.x, trash.y, trash.width, trash.height)) {
                 world.trashList.removeIndex(i);
                 world.carriedTrash += 1;
+                audio.playS(Sfx.C_TRASH, 0.8f);
             }
         }
 
@@ -82,17 +93,22 @@ public class CollisionHandler {
             if (world.carriedTrash > 0) {
                 world.score.value += world.carriedTrash;
                 world.carriedTrash = 0;
+                audio.playS(Sfx.DELIVERY);
             }
             // Após entregar, verifica condição de vitória
             if (world.trashList.size == 0 && world.carriedTrash == 0) {
                 world.gameWon = true;
                 world.gameOver = true;
                 t.speed = 0f; // para o caminhão
+                audio.fadeOut(Mfx.TRACK,0.6f);
+                audio.waitAndRun(500,() -> {
+                    audio.playS(Sfx.WIN, 1.5f);
+                });
                 return;
             }
         }
     }
-    
+
 
     // Versão baseada em bounds explícitos (hitbox reduzida)
     private boolean isHitByTruckFrontBounds(Player player, float bx, float by, float bw, float bh) {
