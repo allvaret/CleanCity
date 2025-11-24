@@ -36,7 +36,7 @@ java -version
 - Importar em IDE (opcional):
   - Importe como projeto Gradle e execute a tarefa `lwjgl3:run`
 
-### Assets
+### Assets e mídia
 
 - As imagens ficam em `assets/sprites/`
 - As texturas são carregadas como arquivos soltos pelo `SpriteManager` via `sprites.get(key)`
@@ -47,6 +47,16 @@ java -version
   - Lixos: `Trash_Pixel1` … `Trash_Pixel6`
   - Intro: `intro1` … `intro4`
   - Defeated: `DefeatedCharacter`
+
+- Os sons ficam em `assets/audio/`
+- São acessadados por meio de `EnumMap` contendo chave (`Sfx` ou `Mfx`) e valor (o caminho até o arquivo)  
+- Os sons utilizados foram:
+  - Fundo: `8bit Bossa`
+  - Entrega: `sfx_Delivery`
+  - Coleta: `sfx_sound_Collect`
+  - Vitória: `sfx_Win`
+  - Derrota: `Jingle_Lose_00`
+  - Atropelamento: `sfx_sound_Death`
 
 ## Controles
 
@@ -123,3 +133,23 @@ java -version
 - A colisão do caminhão usa uma hitbox reduzida e centralizada (por padrão 90% do tamanho visual) aplicada em `CollisionHandler.update()`; isso evita o "retângulo invisível" muito maior que o sprite.
 - A velocidade inicial do caminhão é calculada em `GameWorld` com base na largura do mundo e na largura inicial do caminhão; o tamanho visual final é ajustado no render.
 - Cada `Trash` possui `spriteKey` estável, evitando que os sprites remanescentes mudem após coletas (Bug inicial).
+
+## Créditos do áudio
+
+- Todos os efeitos sonoros foram baixados do [OpenGameArt.org](https://opengameart.org/)
+    
+    Agradeçimentos aos criadores:
+-  **Little Robot Sound Factory** - *Jingle_Lose_00*  
+   https://opengameart.org/content/8-bit-sound-effects-library
+
+- **Bart Kelsey** - *Sfx_Win (snare)*   
+   https://opengameart.org/content/level-up-sound-effects    
+
+- **@Joth_Music** - *8bit Bossa*  
+   https://opengameart.org/content/bossa-nova  
+
+-  **SubspaceAudio** -  
+- *sfx_sound_Collect* (in package sfx_sound_neutral6)
+- *sfx_Delivery* (in package sfx_damage_hit3)
+- *sfx_sound_death* (in package sfx_sound_nagger2)  
+  https://opengameart.org/content/512-sound-effects-8-bit-style
